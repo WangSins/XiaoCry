@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">XiaoCry</string>
+    <string name="copy_success">复制成功</string>
+    <string name="check_network_status">请确认网络连接状态</string>
+    <string name="press_exit_again">再按一次退出程序</string>
+</resources>
