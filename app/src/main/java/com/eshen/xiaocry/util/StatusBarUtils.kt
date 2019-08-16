@@ -24,9 +24,9 @@ object StatusBarUtils {
             val decorView = window.decorView
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS) //可有可无
             decorView.systemUiVisibility =
-                (if (isTranslate) View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN else 0) or if (isDarkText) View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR else 0
+                    (if (isTranslate) View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN else 0) or if (isDarkText) View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR else 0
             window.statusBarColor =
-                if (isTranslate) Color.TRANSPARENT else ContextCompat.getColor(activity, bgColor) //Android5.0就可以用
+                    if (isTranslate) Color.TRANSPARENT else ContextCompat.getColor(activity, bgColor) //Android5.0就可以用
         }
     }
 }

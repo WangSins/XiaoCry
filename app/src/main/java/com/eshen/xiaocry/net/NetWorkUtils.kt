@@ -18,8 +18,8 @@ object NetWorkUtils {
     fun doGetPiece(url: String): NetWorkUtils {
         val okHttpClient = OkHttpClient()
         val request = Request.Builder()
-            .url(url)
-            .build()
+                .url(url)
+                .build()
         val call = okHttpClient.newCall(request)
         call.enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
