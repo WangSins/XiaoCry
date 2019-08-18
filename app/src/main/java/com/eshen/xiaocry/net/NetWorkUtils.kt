@@ -2,8 +2,10 @@ package com.eshen.xiaocry.net
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.text.TextUtils
 import okhttp3.*
 import java.io.IOException
+import java.net.URLEncoder
 
 /**
  * Created by Sin on 2019/7/27
@@ -12,10 +14,7 @@ object NetWorkUtils {
 
     private lateinit var requestCallback: RequestCallback
 
-    /**
-     * 获取文字段子
-     */
-    fun doGetPiece(url: String): NetWorkUtils {
+    fun doGet(url: String): NetWorkUtils {
         val okHttpClient = OkHttpClient()
         val request = Request.Builder()
                 .url(url)
@@ -60,5 +59,24 @@ object NetWorkUtils {
             }
         }
         return hasWifiCon || hasMobileCon
+    }
+
+    fun makeUrl(baseUrl: String, action: String, params: Map<String, String>?): String {
+        var url = baseUrl + action
+        if (params == null || params.isEmpty()) {
+            return url
+        }
+
+        var i = 0
+        for ((key, value) in params) {
+            if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
+                continue
+            }
+
+            url += if (i == 0) "?" else "&"
+            url += key + "=" + URLEncoder.encode(value)
+            i++
+        }
+        return url
     }
 }

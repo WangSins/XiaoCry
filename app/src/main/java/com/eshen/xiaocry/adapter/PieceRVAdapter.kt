@@ -39,7 +39,7 @@ class PieceRVAdapter : RecyclerView.Adapter<PieceRVAdapter.PieceHolder>() {
 
     override fun onBindViewHolder(p0: PieceHolder, p1: Int) {
         p0.pieceText.text = pieceList[p1].text
-        p0.pieceText.setOnLongClickListener {
+        p0.itemView.setOnLongClickListener {
             ClipBoardUtils.copyClipBoard(it.context, "piece", pieceList[p1].text)
             ToastUtils.showToast(it.context, it.context.resources.getString(R.string.copy_success))
             true

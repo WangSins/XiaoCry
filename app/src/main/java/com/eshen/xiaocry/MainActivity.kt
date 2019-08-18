@@ -12,6 +12,7 @@ import android.view.View
 import com.eshen.xiaocry.adapter.OnRVListener
 import com.eshen.xiaocry.adapter.PieceRVAdapter
 import com.eshen.xiaocry.bean.PieceBean
+import com.eshen.xiaocry.constant.APIConstants
 import com.eshen.xiaocry.net.NetWorkUtils
 import com.eshen.xiaocry.net.RequestCallback
 import com.eshen.xiaocry.util.DensityUtils
@@ -25,7 +26,7 @@ import java.io.IOException
 class MainActivity : AppCompatActivity() {
 
     private var page = 0
-    private var mExitTime: Long = 0
+    private var exitTime: Long = 0
     private var pieceList = ArrayList<PieceBean>()
     private lateinit var pieceRVAdapter: PieceRVAdapter
 
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         initStatusBar()
         initActionBar()
         initView()
-        loadMore()
+        loadMore(true)
         initListener()
     }
 
@@ -44,23 +45,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun initStatusBar() {
         StatusBarUtils.setStatusColor(
-            this,
-            isTranslate = false,
-            isDarkText = true,
-            bgColor = android.R.color.transparent
+                this,
+                isTranslate = false,
+                isDarkText = true,
+                bgColor = android.R.color.transparent
         )
     }
 
     private fun initListener() {
         refresh_layout.setOnRefreshListener {
-            page = 0
-            loadMore()
+            loadMore(true)
         }
         pieceRVAdapter.setRVListener(object : OnRVListener {
 
             override fun onLoadMore() {
-                page += 1
-                loadMore()
+                loadMore(false)
             }
         })
     }
@@ -69,8 +68,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         refresh_layout.setColorSchemeResources(R.color.colorPrimary)
         val layoutManager = StaggeredGridLayoutManager(
-            2,
-            StaggeredGridLayoutManager.VERTICAL
+                2,
+                StaggeredGridLayoutManager.VERTICAL
         )
         recycler_view.layoutManager = layoutManager
         pieceRVAdapter = PieceRVAdapter()
@@ -90,10 +89,18 @@ class MainActivity : AppCompatActivity() {
         recycler_view.adapter = pieceRVAdapter
     }
 
-    private fun loadMore() = if (NetWorkUtils.isNetworkAvailable(this)) {
+    private fun loadMore(isRefresh: Boolean) = if (NetWorkUtils.isNetworkAvailable(this)) {
         pieceList.clear()
-        val url = "https://www.apiopen.top/satinApi?type=2&page=$page"
-        NetWorkUtils.doGetPiece(url).doRequest(object : RequestCallback {
+        if (isRefresh) {
+            page = 0
+        } else {
+            ++page
+        }
+        val params = HashMap<String, String>()
+        params["type"] = APIConstants.TYPE_TEXT.toString()
+        params["page"] = page.toString()
+        val url = NetWorkUtils.makeUrl(APIConstants.BASE_URL, APIConstants.ACTION_SATINAPI, params)
+        NetWorkUtils.doGet(url).doRequest(object : RequestCallback {
 
             override fun requestSuccess(response: Response) {
                 pieceList = JSONParseUtils.parsePieceList(response.body()?.string())
@@ -119,9 +126,9 @@ class MainActivity : AppCompatActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if ((System.currentTimeMillis() - mExitTime) > 2000) {
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
                 ToastUtils.showToast(this, resources.getString(R.string.press_exit_again))
-                mExitTime = System.currentTimeMillis()
+                exitTime = System.currentTimeMillis()
             } else {
                 finish()
             }
