@@ -5,12 +5,11 @@ package com.eshen.xiaocry.constant
  */
 object APIConstants {
 
-    const val BASE_URL = "https://www.apiopen.top/"
+    const val BASE_URL = "https://api.apiopen.top/"
 
-    const val ACTION_SATINAPI = "satinApi"
+    const val ACTION_GETJOKE = "getJoke"
 
-    const val TYPE_ALL = 1
-    const val TYPE_TEXT = 2
-    const val TYPE_IMAGE = 3
-    const val TYPE_VIDEO = 4
+    const val TYPE_TEXT = "text"
+    const val TYPE_IMAGE = "image"
+    const val TYPE_VIDEO = "video"
 }

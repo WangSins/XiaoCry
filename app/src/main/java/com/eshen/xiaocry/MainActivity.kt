@@ -10,8 +10,8 @@ import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.KeyEvent
 import android.view.View
 import com.eshen.xiaocry.adapter.OnRVListener
-import com.eshen.xiaocry.adapter.PieceRVAdapter
-import com.eshen.xiaocry.bean.PieceBean
+import com.eshen.xiaocry.adapter.JokeRVAdapter
+import com.eshen.xiaocry.bean.JokeBean
 import com.eshen.xiaocry.constant.APIConstants
 import com.eshen.xiaocry.net.NetWorkUtils
 import com.eshen.xiaocry.net.RequestCallback
@@ -27,8 +27,8 @@ class MainActivity : AppCompatActivity() {
 
     private var page = 0
     private var exitTime: Long = 0
-    private var pieceList = ArrayList<PieceBean>()
-    private lateinit var pieceRVAdapter: PieceRVAdapter
+    private var jokeList = ArrayList<JokeBean>()
+    private lateinit var jokeRVAdapter: JokeRVAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         refresh_layout.setOnRefreshListener {
             loadMore(true)
         }
-        pieceRVAdapter.setRVListener(object : OnRVListener {
+        jokeRVAdapter.setRVListener(object : OnRVListener {
 
             override fun onLoadMore() {
                 loadMore(false)
@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
                 StaggeredGridLayoutManager.VERTICAL
         )
         recycler_view.layoutManager = layoutManager
-        pieceRVAdapter = PieceRVAdapter()
+        jokeRVAdapter = JokeRVAdapter()
         recycler_view.addItemDecoration(object : ItemDecoration() {
 
             override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: State) {
@@ -86,11 +86,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-        recycler_view.adapter = pieceRVAdapter
+        recycler_view.adapter = jokeRVAdapter
     }
 
     private fun loadMore(isRefresh: Boolean) = if (NetWorkUtils.isNetworkAvailable(this)) {
-        pieceList.clear()
+        jokeList.clear()
         if (isRefresh) {
             page = 0
         } else {
@@ -99,11 +99,11 @@ class MainActivity : AppCompatActivity() {
         val params = HashMap<String, String>()
         params["type"] = APIConstants.TYPE_TEXT.toString()
         params["page"] = page.toString()
-        val url = NetWorkUtils.makeUrl(APIConstants.BASE_URL, APIConstants.ACTION_SATINAPI, params)
+        val url = NetWorkUtils.makeUrl(APIConstants.BASE_URL, APIConstants.ACTION_GETJOKE, params)
         NetWorkUtils.doGet(url).doRequest(object : RequestCallback {
 
             override fun requestSuccess(response: Response) {
-                pieceList = JSONParseUtils.parsePieceList(response.body()?.string())
+                jokeList = JSONParseUtils.parseJokeList(response.body()?.string())
                 runOnUiThread {
                     setData()
                 }
@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setData() {
-        pieceRVAdapter.setData(this.pieceList, page == 0)
+        jokeRVAdapter.setData(this.jokeList, page == 0)
         refresh_layout.isRefreshing = false
     }
 

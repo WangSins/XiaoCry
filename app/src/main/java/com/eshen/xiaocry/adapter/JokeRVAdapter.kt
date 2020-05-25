@@ -6,41 +6,41 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.eshen.xiaocry.R
-import com.eshen.xiaocry.bean.PieceBean
+import com.eshen.xiaocry.bean.JokeBean
 import com.eshen.xiaocry.util.ClipBoardUtils
 import com.eshen.xiaocry.util.ToastUtils
 
 /**
  * Created by Sin on 2019/7/27
  */
-class PieceRVAdapter : RecyclerView.Adapter<PieceRVAdapter.PieceHolder>() {
+class JokeRVAdapter : RecyclerView.Adapter<JokeRVAdapter.JokeHolder>() {
 
-    private var pieceList = ArrayList<PieceBean>()
+    private var jokeList = ArrayList<JokeBean>()
     private lateinit var onRVListener: OnRVListener
 
-    fun setData(list: ArrayList<PieceBean>, isRefresh: Boolean) {
+    fun setData(list: ArrayList<JokeBean>, isRefresh: Boolean) {
         if (isRefresh) {
-            this.pieceList.clear()
+            this.jokeList.clear()
         }
-        this.pieceList.addAll(list)
+        this.jokeList.addAll(list)
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): PieceHolder {
-        val mItemView: View = LayoutInflater.from(p0.context).inflate(R.layout.item_piece, null)
-        return PieceHolder(mItemView)
+    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): JokeHolder {
+        val mItemView: View = LayoutInflater.from(p0.context).inflate(R.layout.item_joke, p0,false)
+        return JokeHolder(mItemView)
     }
 
     override fun getItemViewType(position: Int): Int {
         return position
     }
 
-    override fun getItemCount(): Int = pieceList.size
+    override fun getItemCount(): Int = jokeList.size
 
-    override fun onBindViewHolder(p0: PieceHolder, p1: Int) {
-        p0.pieceText.text = pieceList[p1].text
+    override fun onBindViewHolder(p0: JokeHolder, p1: Int) {
+        p0.jokeText.text = jokeList[p1].text
         p0.itemView.setOnLongClickListener {
-            ClipBoardUtils.copyClipBoard(it.context, "piece", pieceList[p1].text)
+            ClipBoardUtils.copyClipBoard(it.context, "joke", jokeList[p1].text)
             ToastUtils.showToast(it.context, it.context.resources.getString(R.string.copy_success))
             true
         }
@@ -49,8 +49,8 @@ class PieceRVAdapter : RecyclerView.Adapter<PieceRVAdapter.PieceHolder>() {
         }
     }
 
-    class PieceHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val pieceText: TextView = itemView.findViewById(R.id.piece_text)
+    class JokeHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val jokeText: TextView = itemView.findViewById(R.id.joke_text)
     }
 
     fun setRVListener(onRVListener: OnRVListener) {
