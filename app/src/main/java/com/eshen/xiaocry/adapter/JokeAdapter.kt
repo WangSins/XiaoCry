@@ -13,13 +13,13 @@ import com.eshen.xiaocry.util.ToastUtils
 /**
  * Created by Sin on 2019/7/27
  */
-class JokeRVAdapter : RecyclerView.Adapter<JokeRVAdapter.JokeHolder>() {
+class JokeAdapter : RecyclerView.Adapter<JokeAdapter.JokeHolder>() {
 
     private var jokeList = ArrayList<JokeBean>()
-    private lateinit var onRVListener: OnRVListener
+    private lateinit var onJokeListener: OnJokeListener
 
-    fun setData(list: ArrayList<JokeBean>, isRefresh: Boolean) {
-        if (isRefresh) {
+    fun setData(list: ArrayList<JokeBean>, isAppend: Boolean) {
+        if (!isAppend) {
             this.jokeList.clear()
         }
         this.jokeList.addAll(list)
@@ -27,7 +27,7 @@ class JokeRVAdapter : RecyclerView.Adapter<JokeRVAdapter.JokeHolder>() {
     }
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): JokeHolder {
-        val mItemView: View = LayoutInflater.from(p0.context).inflate(R.layout.item_joke, p0,false)
+        val mItemView: View = LayoutInflater.from(p0.context).inflate(R.layout.item_joke, p0, false)
         return JokeHolder(mItemView)
     }
 
@@ -45,7 +45,7 @@ class JokeRVAdapter : RecyclerView.Adapter<JokeRVAdapter.JokeHolder>() {
             true
         }
         if (p1 == itemCount - 1) {
-            onRVListener.onLoadMore()
+            onJokeListener.onLoadMore()
         }
     }
 
@@ -53,7 +53,11 @@ class JokeRVAdapter : RecyclerView.Adapter<JokeRVAdapter.JokeHolder>() {
         val jokeText: TextView = itemView.findViewById(R.id.joke_text)
     }
 
-    fun setRVListener(onRVListener: OnRVListener) {
-        this.onRVListener = onRVListener
+    interface OnJokeListener {
+        fun onLoadMore()
+    }
+
+    fun setJokeListener(onJokeListener: OnJokeListener) {
+        this.onJokeListener = onJokeListener
     }
 }

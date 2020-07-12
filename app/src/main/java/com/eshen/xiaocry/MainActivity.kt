@@ -4,31 +4,28 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.ItemDecoration
-import android.support.v7.widget.RecyclerView.State
+import android.support.v7.widget.RecyclerView.*
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.KeyEvent
 import android.view.View
-import com.eshen.xiaocry.adapter.OnRVListener
-import com.eshen.xiaocry.adapter.JokeRVAdapter
+import com.eshen.xiaocry.adapter.JokeAdapter
 import com.eshen.xiaocry.bean.JokeBean
 import com.eshen.xiaocry.constant.APIConstants
 import com.eshen.xiaocry.net.NetWorkUtils
 import com.eshen.xiaocry.net.RequestCallback
-import com.eshen.xiaocry.util.DensityUtils
-import com.eshen.xiaocry.util.JSONParseUtils
-import com.eshen.xiaocry.util.StatusBarUtils
-import com.eshen.xiaocry.util.ToastUtils
+import com.eshen.xiaocry.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.Response
 import java.io.IOException
+
 
 class MainActivity : AppCompatActivity() {
 
     private var page = 0
     private var exitTime: Long = 0
     private var jokeList = ArrayList<JokeBean>()
-    private lateinit var jokeRVAdapter: JokeRVAdapter
+    private lateinit var jokeAdapter: JokeAdapter
+    private var showFAB: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,10 +42,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun initStatusBar() {
         StatusBarUtils.setStatusColor(
-                this,
-                isTranslate = false,
-                isDarkText = true,
-                bgColor = android.R.color.transparent
+            this,
+            isTranslate = false,
+            isDarkText = true,
+            bgColor = android.R.color.transparent
         )
     }
 
@@ -56,26 +53,52 @@ class MainActivity : AppCompatActivity() {
         refresh_layout.setOnRefreshListener {
             loadMore(true)
         }
-        jokeRVAdapter.setRVListener(object : OnRVListener {
+        jokeAdapter.setJokeListener(object : JokeAdapter.OnJokeListener {
 
             override fun onLoadMore() {
                 loadMore(false)
             }
         })
+        recycler_view.addOnScrollListener(object : OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (recyclerView.canScrollVertically(-1)) {
+                    //能向上滚动，离开顶部
+                    if (!showFAB) {
+                        AnimatorUtil.scaleObjectAnimation(floating_action_button, 0f, 1f, 400)
+                        showFAB = true
+                    }
+                } else {
+                    //不能向上滚动，到达顶部
+                    if (showFAB) {
+                        AnimatorUtil.scaleObjectAnimation(floating_action_button, 1f, 0f, 300)
+                        showFAB = false
+                    }
+                }
+            }
+        })
+        floating_action_button.setOnClickListener {
+            recycler_view.scrollToPosition(0)
+        }
     }
 
     private fun initView() {
         setContentView(R.layout.activity_main)
         refresh_layout.setColorSchemeResources(R.color.colorPrimary)
         val layoutManager = StaggeredGridLayoutManager(
-                2,
-                StaggeredGridLayoutManager.VERTICAL
+            2,
+            StaggeredGridLayoutManager.VERTICAL
         )
         recycler_view.layoutManager = layoutManager
-        jokeRVAdapter = JokeRVAdapter()
+        jokeAdapter = JokeAdapter()
         recycler_view.addItemDecoration(object : ItemDecoration() {
 
-            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: State) {
+            override fun getItemOffsets(
+                outRect: Rect,
+                view: View,
+                parent: RecyclerView,
+                state: State
+            ) {
                 super.getItemOffsets(outRect, view, parent, state)
                 val space = DensityUtils.dip2px(view.context, 4f)
                 outRect.let {
@@ -86,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-        recycler_view.adapter = jokeRVAdapter
+        recycler_view.adapter = jokeAdapter
     }
 
     private fun loadMore(isRefresh: Boolean) = if (NetWorkUtils.isNetworkAvailable(this)) {
@@ -97,7 +120,8 @@ class MainActivity : AppCompatActivity() {
             ++page
         }
         val params = HashMap<String, String>()
-        params["type"] = APIConstants.TYPE_TEXT.toString()
+        params["type"] = APIConstants.TYPE_TEXT
+        params["count"] = APIConstants.DEFAULT_COUNT.toString()
         params["page"] = page.toString()
         val url = NetWorkUtils.makeUrl(APIConstants.BASE_URL, APIConstants.ACTION_GETJOKE, params)
         NetWorkUtils.doGet(url).doRequest(object : RequestCallback {
@@ -119,7 +143,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setData() {
-        jokeRVAdapter.setData(this.jokeList, page == 0)
+        jokeAdapter.setData(this.jokeList, page > 0)
         refresh_layout.isRefreshing = false
     }
 
