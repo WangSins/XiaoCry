@@ -2,12 +2,11 @@ package com.eshen.xiaocry
 
 import android.graphics.Rect
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.*
-import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.KeyEvent
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView.*
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.eshen.xiaocry.adapter.JokeAdapter
 import com.eshen.xiaocry.bean.JokeBean
 import com.eshen.xiaocry.constant.APIConstants
@@ -60,7 +59,11 @@ class MainActivity : AppCompatActivity() {
             }
         })
         recycler_view.addOnScrollListener(object : OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            override fun onScrolled(
+                recyclerView: androidx.recyclerview.widget.RecyclerView,
+                dx: Int,
+                dy: Int
+            ) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (recyclerView.canScrollVertically(-1)) {
                     //能向上滚动，离开顶部
@@ -85,31 +88,33 @@ class MainActivity : AppCompatActivity() {
     private fun initView() {
         setContentView(R.layout.activity_main)
         refresh_layout.setColorSchemeResources(R.color.colorPrimary)
-        val layoutManager = StaggeredGridLayoutManager(
-            2,
-            StaggeredGridLayoutManager.VERTICAL
-        )
-        recycler_view.layoutManager = layoutManager
+        val staggeredGridLayoutManager =
+            StaggeredGridLayoutManager(
+                2,
+                StaggeredGridLayoutManager.VERTICAL
+            )
         jokeAdapter = JokeAdapter()
-        recycler_view.addItemDecoration(object : ItemDecoration() {
+        recycler_view.run {
+            layoutManager = staggeredGridLayoutManager
+            adapter = jokeAdapter
+            addItemDecoration(object : ItemDecoration() {
 
-            override fun getItemOffsets(
-                outRect: Rect,
-                view: View,
-                parent: RecyclerView,
-                state: State
-            ) {
-                super.getItemOffsets(outRect, view, parent, state)
-                val space = DensityUtils.dip2px(view.context, 4f)
-                outRect.let {
-                    it.left = space
-                    it.top = space
-                    it.right = space
-                    it.bottom = space
+                override fun getItemOffsets(
+                    outRect: Rect,
+                    view: View,
+                    parent: androidx.recyclerview.widget.RecyclerView,
+                    state: State
+                ) {
+                    super.getItemOffsets(outRect, view, parent, state)
+                    outRect.let {
+                        it.left = 4.dp
+                        it.top = 4.dp
+                        it.right = 4.dp
+                        it.bottom = 4.dp
+                    }
                 }
-            }
-        })
-        recycler_view.adapter = jokeAdapter
+            })
+        }
     }
 
     private fun loadMore(isRefresh: Boolean) = if (NetWorkUtils.isNetworkAvailable(this)) {

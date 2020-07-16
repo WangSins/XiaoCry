@@ -10,8 +10,8 @@ object ClipBoardUtils {
      * 复制到裁剪版
      */
     fun copyClipBoard(context: Context, label: String, text: String) {
-        (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).run {
-            primaryClip = ClipData.newPlainText(label, text)
+        with(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager) {
+            setPrimaryClip(ClipData.newPlainText(label, text))
         }
     }
 }
