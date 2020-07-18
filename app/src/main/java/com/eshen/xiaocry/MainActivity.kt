@@ -14,7 +14,6 @@ import com.eshen.xiaocry.net.NetWorkUtils
 import com.eshen.xiaocry.net.RequestCallback
 import com.eshen.xiaocry.util.*
 import kotlinx.android.synthetic.main.activity_main.*
-import okhttp3.Response
 import java.io.IOException
 
 
@@ -131,24 +130,19 @@ class MainActivity : AppCompatActivity() {
         val url = NetWorkUtils.makeUrl(APIConstants.BASE_URL, APIConstants.ACTION_GETJOKE, params)
         NetWorkUtils.doGet(url).doRequest(object : RequestCallback {
 
-            override fun requestSuccess(response: Response) {
-                jokeList = JSONParseUtils.parseJokeList(response.body()?.string())
-                runOnUiThread {
-                    setData()
-                }
+            override fun onResponseInUi(result: String) {
+                jokeList = JSONParseUtils.parseJokeList(result)
+                jokeAdapter.setData(jokeList, page > 0)
+                refresh_layout.isRefreshing = false
             }
 
-            override fun requestError(e: IOException) {
+            override fun onFailureInUi(e: IOException) {
+                refresh_layout.isRefreshing = false
                 e.printStackTrace()
             }
         })
     } else {
         ToastUtils.showToast(this, resources.getString(R.string.check_network_status))
-        refresh_layout.isRefreshing = false
-    }
-
-    private fun setData() {
-        jokeAdapter.setData(this.jokeList, page > 0)
         refresh_layout.isRefreshing = false
     }
 

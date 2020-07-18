@@ -1,6 +1,5 @@
 package com.eshen.xiaocry.net
 
-import okhttp3.Response
 import java.io.IOException
 
 /**
@@ -11,11 +10,11 @@ interface RequestCallback {
     /**
      * 请求成功回调
      */
-    fun requestSuccess(response: Response)
+    fun onResponseInUi(result: String)
 
     /**
      * 请求失败回调
      */
-    fun requestError(e: IOException)
+    fun onFailureInUi(e: IOException)
 
 }
