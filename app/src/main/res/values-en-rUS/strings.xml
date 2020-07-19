@@ -3,4 +3,7 @@
     <string name="copy_success">Copy success</string>
     <string name="check_network_status">Please confirm the network connection status</string>
     <string name="press_exit_again">Press exit again</string>
+    <string name="content_is_empty">Content is empty</string>
+    <string name="load_error">Loading failed, please click me to try again</string>
+    <string name="no_new_content">No new content loaded</string>
 </resources>

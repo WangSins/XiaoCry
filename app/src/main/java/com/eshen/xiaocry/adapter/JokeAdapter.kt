@@ -7,8 +7,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.eshen.xiaocry.R
 import com.eshen.xiaocry.bean.JokeBean
-import com.eshen.xiaocry.util.ClipBoardUtils
-import com.eshen.xiaocry.util.ToastUtils
 
 /**
  * Created by Sin on 2019/7/27
@@ -38,10 +36,10 @@ class JokeAdapter : RecyclerView.Adapter<JokeAdapter.JokeHolder>() {
     override fun getItemCount(): Int = jokeList.size
 
     override fun onBindViewHolder(p0: JokeHolder, p1: Int) {
-        p0.jokeText.text = jokeList[p1].text
+        p0.jokeContentTv.text = jokeList[p1].text
         p0.itemView.setOnLongClickListener {
-            ClipBoardUtils.copyClipBoard(it.context, "joke", jokeList[p1].text)
-            ToastUtils.showToast(it.context, it.context.resources.getString(R.string.copy_success))
+            it.tag = jokeList[p1]
+            onJokeListener.onItemLongClick(it)
             true
         }
         if (p1 == itemCount - 1) {
@@ -50,11 +48,12 @@ class JokeAdapter : RecyclerView.Adapter<JokeAdapter.JokeHolder>() {
     }
 
     class JokeHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val jokeText: TextView = itemView.findViewById(R.id.joke_text)
+        val jokeContentTv: TextView = itemView.findViewById(R.id.joke_content_tv)
     }
 
     interface OnJokeListener {
         fun onLoadMore()
+        fun onItemLongClick(v: View)
     }
 
     fun setJokeListener(onJokeListener: OnJokeListener) {

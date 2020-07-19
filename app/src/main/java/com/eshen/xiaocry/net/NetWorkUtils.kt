@@ -1,7 +1,5 @@
 package com.eshen.xiaocry.net
 
-import android.content.Context
-import android.net.ConnectivityManager
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
@@ -58,30 +56,6 @@ object NetWorkUtils {
 
     fun doRequest(requestCallback: RequestCallback) {
         this.requestCallback = requestCallback
-    }
-
-    fun isNetworkAvailable(context: Context): Boolean {
-        var hasWifiCon = false
-        var hasMobileCon = false
-
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val netInfoList = cm.allNetworkInfo
-        for (net in netInfoList) {
-
-            val type = net.typeName
-            if (type.equals("WIFI", ignoreCase = true)) {
-                if (net.isConnected) {
-                    hasWifiCon = true
-                }
-            }
-
-            if (type.equals("MOBILE", ignoreCase = true)) {
-                if (net.isConnected) {
-                    hasMobileCon = true
-                }
-            }
-        }
-        return hasWifiCon || hasMobileCon
     }
 
     fun makeUrl(baseUrl: String, action: String, params: Map<String, String>?): String {

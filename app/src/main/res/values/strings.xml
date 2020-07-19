@@ -3,4 +3,7 @@
     <string name="copy_success">复制成功</string>
     <string name="check_network_status">请确认网络连接状态</string>
     <string name="press_exit_again">再按一次退出程序</string>
+    <string name="content_is_empty">内容为空</string>
+    <string name="load_error">加载失败，请点我重试</string>
+    <string name="no_new_content">"没有加载到新内容"</string>
 </resources>
